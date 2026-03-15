@@ -1,0 +1,29 @@
+{
+  "commands": {
+    "open": {
+      "description": "打开文件或应用",
+      "type": "system",
+      "execute": "start \"{0}\""
+    },
+    "del": {
+      "description": "删除文件",
+      "type": "system",
+      "execute": "del \"{0}\""
+    },
+    "copy": {
+      "description": "复制文件",
+      "type": "system",
+      "execute": "copy \"{0}\" \"{1}\""
+    },
+    "move": {
+      "description": "移动文件",
+      "type": "system",
+      "execute": "move \"{0}\" \"{1}\""
+    },
+    "rename": {
+      "description": "重命名文件",
+      "type": "system",
+      "execute": "rename \"{0}\" \"{1}\""
+    }
+  }
+}
