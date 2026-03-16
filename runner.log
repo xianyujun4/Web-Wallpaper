@@ -1,0 +1,154 @@
+
+=== New Execution ===
+Current directory: C:\Windows\system32
+Log path: e:\SomeTing\Object\Web-Wallpaper\runner.log
+Full command line: "E:\SomeTing\Object\Web-Wallpaper\runner.exe" "mycmd://ipconfig%20%26%20open%20D%3A%5Ctest.txt/"
+argc: 2
+argv[0]: E:\SomeTing\Object\Web-Wallpaper\runner.exe
+argv[1]: mycmd://ipconfig%20%26%20open%20D%3A%5Ctest.txt/
+Extracted command: ipconfig & open D:\test.txt
+Wide command: ipconfig & open D:\test.txt
+Event: 2026-03-16_14:47:36
+
+=== New Execution ===
+Current directory: C:\Windows\system32
+Log path: e:\SomeTing\Object\Web-Wallpaper\runner.log
+Full command line: "E:\SomeTing\Object\Web-Wallpaper\runner.exe" "mycmd://ipconfig%20%26%20start%20%22%22%20%22D%3A%2Ftest.txt%22/"
+argc: 2
+argv[0]: E:\SomeTing\Object\Web-Wallpaper\runner.exe
+argv[1]: mycmd://ipconfig%20%26%20start%20%22%22%20%22D%3A%2Ftest.txt%22/
+Extracted command: ipconfig & start "" "D:/test.txt"
+Wide command: ipconfig & start "" "D:/test.txt"
+Event: 2026-03-16_14:50:52
+
+=== New Execution ===
+Current directory: C:\Windows\system32
+Log path: e:\SomeTing\Object\Web-Wallpaper\runner.log
+Full command line: "E:\SomeTing\Object\Web-Wallpaper\runner.exe" "mycmd://start%20%22%22D%3A%5Ctest.txt%22%22/"
+argc: 2
+argv[0]: E:\SomeTing\Object\Web-Wallpaper\runner.exe
+argv[1]: mycmd://start%20%22%22D%3A%5Ctest.txt%22%22/
+Extracted command: start ""D:\test.txt""
+Wide command: start ""D:\test.txt""
+Event: 2026-03-16_14:51:22
+
+=== New Execution ===
+Current directory: C:\Windows\system32
+Log path: e:\SomeTing\Object\Web-Wallpaper\runner.log
+Full command line: "E:\SomeTing\Object\Web-Wallpaper\runner.exe" "mycmd://ipconfig%20%26%20start%20%22%22%20%22D%3A%2Ftest.txt%22/"
+argc: 2
+argv[0]: E:\SomeTing\Object\Web-Wallpaper\runner.exe
+argv[1]: mycmd://ipconfig%20%26%20start%20%22%22%20%22D%3A%2Ftest.txt%22/
+Extracted command: ipconfig & start "" "D:/test.txt"
+Wide command: ipconfig & start "" "D:/test.txt"
+Event: 2026-03-16_14:51:50
+
+=== New Execution ===
+Current directory: C:\Windows\system32
+Log path: e:\SomeTing\Object\Web-Wallpaper\runner.log
+Full command line: "E:\SomeTing\Object\Web-Wallpaper\runner.exe" "mycmd://start%20%22%22D%3A%5Ctest.txt%22%22/"
+argc: 2
+argv[0]: E:\SomeTing\Object\Web-Wallpaper\runner.exe
+argv[1]: mycmd://start%20%22%22D%3A%5Ctest.txt%22%22/
+Extracted command: start ""D:\test.txt""
+Wide command: start ""D:\test.txt""
+Event: 2026-03-16_14:57:05
+
+=== New Execution ===
+Current directory: C:\Windows\system32
+Log path: e:\SomeTing\Object\Web-Wallpaper\runner.log
+Full command line: "E:\SomeTing\Object\Web-Wallpaper\runner.exe" "mycmd://ipconfig%20%26%20start%20%22%22%20%22D%3A%2Ftest.txt%22/"
+argc: 2
+argv[0]: E:\SomeTing\Object\Web-Wallpaper\runner.exe
+argv[1]: mycmd://ipconfig%20%26%20start%20%22%22%20%22D%3A%2Ftest.txt%22/
+Extracted command: ipconfig & start "" "D:/test.txt"
+Wide command: ipconfig & start "" "D:/test.txt"
+Event: 2026-03-16_14:57:15
+
+=== New Execution ===
+Current directory: C:\Windows\system32
+Log path: e:\SomeTing\Object\Web-Wallpaper\runner.log
+Full command line: "E:\SomeTing\Object\Web-Wallpaper\runner.exe" "mycmd://start%20%22%22%20%22D%3A%2Ftest.txt%22/"
+argc: 2
+argv[0]: E:\SomeTing\Object\Web-Wallpaper\runner.exe
+argv[1]: mycmd://start%20%22%22%20%22D%3A%2Ftest.txt%22/
+Extracted command: start "" "D:/test.txt"
+Wide command: start "" "D:/test.txt"
+Event: 2026-03-16_15:00:37
+
+=== New Execution ===
+Current directory: C:\Windows\system32
+Log path: e:\SomeTing\Object\Web-Wallpaper\runner.log
+Full command line: "E:\SomeTing\Object\Web-Wallpaper\runner.exe" "mycmd://start%20%22%22D%3A%5Ctest.txt%22%22/"
+argc: 2
+argv[0]: E:\SomeTing\Object\Web-Wallpaper\runner.exe
+argv[1]: mycmd://start%20%22%22D%3A%5Ctest.txt%22%22/
+Extracted command: start ""D:\test.txt""
+Wide command: start ""D:\test.txt""
+Event: 2026-03-16_15:00:48
+
+=== New Execution ===
+Current directory: C:\Windows\system32
+Log path: e:\SomeTing\Object\Web-Wallpaper\runner.log
+Full command line: "E:\SomeTing\Object\Web-Wallpaper\runner.exe" "mycmd://start%20%22%22%20%22D%3A%5Ctest.txt%22/"
+argc: 2
+argv[0]: E:\SomeTing\Object\Web-Wallpaper\runner.exe
+argv[1]: mycmd://start%20%22%22%20%22D%3A%5Ctest.txt%22/
+Extracted command: start "" "D:\test.txt"
+Wide command: start "" "D:\test.txt"
+Event: 2026-03-16_15:16:55
+
+=== New Execution ===
+Current directory: C:\Windows\system32
+Log path: e:\SomeTing\Object\Web-Wallpaper\runner.log
+Full command line: "E:\SomeTing\Object\Web-Wallpaper\runner.exe" "mycmd://ipconfig%20%26%20start%20%22%22%20%22D%3A%5Ctest.txt%22/"
+argc: 2
+argv[0]: E:\SomeTing\Object\Web-Wallpaper\runner.exe
+argv[1]: mycmd://ipconfig%20%26%20start%20%22%22%20%22D%3A%5Ctest.txt%22/
+Extracted command: ipconfig & start "" "D:\test.txt"
+Wide command: ipconfig & start "" "D:\test.txt"
+Event: 2026-03-16_15:17:06
+
+=== New Execution ===
+Current directory: C:\Windows\system32
+Log path: e:\SomeTing\Object\Web-Wallpaper\runner.log
+Full command line: "E:\SomeTing\Object\Web-Wallpaper\runner.exe" "mycmd://start%20%22%22%20%22D%3A%5Ctest.txt%22%20%26%20run%20E%3A%2FSomeTing%2FClickRun.exe/"
+argc: 2
+argv[0]: E:\SomeTing\Object\Web-Wallpaper\runner.exe
+argv[1]: mycmd://start%20%22%22%20%22D%3A%5Ctest.txt%22%20%26%20run%20E%3A%2FSomeTing%2FClickRun.exe/
+Extracted command: start "" "D:\test.txt" & run E:/SomeTing/ClickRun.exe
+Wide command: start "" "D:\test.txt" & run E:/SomeTing/ClickRun.exe
+Event: 2026-03-16_15:17:16
+
+=== New Execution ===
+Current directory: C:\Windows\system32
+Log path: e:\SomeTing\Object\Web-Wallpaper\runner.log
+Full command line: "E:\SomeTing\Object\Web-Wallpaper\runner.exe" "mycmd://ipconfig%20%26%20start%20%22%22%20%22D%3A%5Ctest.txt%22/"
+argc: 2
+argv[0]: E:\SomeTing\Object\Web-Wallpaper\runner.exe
+argv[1]: mycmd://ipconfig%20%26%20start%20%22%22%20%22D%3A%5Ctest.txt%22/
+Extracted command: ipconfig & start "" "D:\test.txt"
+Wide command: ipconfig & start "" "D:\test.txt"
+Event: 2026-03-16_15:19:35
+
+=== New Execution ===
+Current directory: C:\Windows\system32
+Log path: e:\SomeTing\Object\Web-Wallpaper\runner.log
+Full command line: "E:\SomeTing\Object\Web-Wallpaper\runner.exe" "mycmd://start%20%22%22%20%22D%3A%5Ctest.txt%22%20%26%20run%20E%3A%2FSomeTing%2FClickRun.exe/"
+argc: 2
+argv[0]: E:\SomeTing\Object\Web-Wallpaper\runner.exe
+argv[1]: mycmd://start%20%22%22%20%22D%3A%5Ctest.txt%22%20%26%20run%20E%3A%2FSomeTing%2FClickRun.exe/
+Extracted command: start "" "D:\test.txt" & run E:/SomeTing/ClickRun.exe
+Wide command: start "" "D:\test.txt" & run E:/SomeTing/ClickRun.exe
+Event: 2026-03-16_15:45:54
+
+=== New Execution ===
+Current directory: C:\Windows\system32
+Log path: e:\SomeTing\Object\Web-Wallpaper\runner.log
+Full command line: "E:\SomeTing\Object\Web-Wallpaper\runner.exe" "mycmd://ipconfig%20%26%20start%20%22%22%20%22D%3A%5Ctest.txt%22/"
+argc: 2
+argv[0]: E:\SomeTing\Object\Web-Wallpaper\runner.exe
+argv[1]: mycmd://ipconfig%20%26%20start%20%22%22%20%22D%3A%5Ctest.txt%22/
+Extracted command: ipconfig & start "" "D:\test.txt"
+Wide command: ipconfig & start "" "D:\test.txt"
+Event: 2026-03-16_15:45:59

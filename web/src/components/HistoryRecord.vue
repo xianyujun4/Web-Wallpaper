@@ -175,9 +175,11 @@ const triggerLocalProtocol = (url) => {
 
 // 处理前往选中的历史记录
 const handleGoToSelected = async () => {
+  console.log('selectedRecords:', selectedRecords.value);
   const selected = historyRecords.value.filter(record => 
     selectedRecords.value.includes(record.id)
   );
+  console.log('selected records:', selected);
 
   if (selected.length === 0) return;
 
@@ -188,6 +190,7 @@ const handleGoToSelected = async () => {
 
   selected.forEach(r => {
     const result = parseInput(r.content);
+    console.log('parsed record:', r.content, result);
     if (result.type === 'url' || result.type === 'search') {
       urls.push(r.content);
     } else if (result.type === 'shell') {
@@ -196,6 +199,7 @@ const handleGoToSelected = async () => {
       customCommands.push(result.value);
     }
   });
+  console.log('shellCommands:', shellCommands);
 
   // 处理网页和搜索（不变）
   urls.forEach(content => {
@@ -215,20 +219,52 @@ const handleGoToSelected = async () => {
     if (!newWindow) isPopupBlocked = true;
   });
 
-  // 处理 $ 指令：逐条触发，不拼接
-  shellCommands.forEach((command, index) => {
+  // 处理所有命令（$ 和 # 指令）：将它们合并为一个，使用 & 连接，只执行一次
+  const allCommands = [];
+  
+  // 添加 $ 指令
+  if (shellCommands.length > 0) {
+    console.log('adding shell commands:', shellCommands);
+    // 确保每个命令末尾没有斜杠
+    const cleanShellCommands = shellCommands.map(cmd => cmd.replace(/\/$/, ''));
+    allCommands.push(...cleanShellCommands);
+  }
+  
+  // 添加 # 指令
+  if (customCommands.length > 0) {
+    console.log('adding custom commands:', customCommands);
+    // 确保每个命令末尾没有斜杠，并且将 open 指令转换为 start 指令
+    const cleanCustomCommands = customCommands.map(cmd => {
+      const cleanCmd = cmd.replace(/\/$/, '');
+      // 检查是否是 open 指令
+      if (cleanCmd.startsWith('open ')) {
+        // 将 open 指令转换为 start 指令
+        const filePath = cleanCmd.substring(5);
+        // 将 "/" 替换为 "\\"
+        const safeFilePath = filePath.replace(/\//g, '\\');
+        return 'start "" "' + safeFilePath + '"';
+      }
+      return cleanCmd;
+    });
+    allCommands.push(...cleanCustomCommands);
+  }
+  
+  // 执行所有命令
+  if (allCommands.length > 0) {
+    console.log('executing all commands:', allCommands);
+    // 将所有命令合并为一个，使用 & 连接
+    const combinedCommand = allCommands.join(' & ');
+    console.log('combined all command:', combinedCommand);
+    const iframe = document.createElement('iframe');
+    iframe.style.display = 'none';
+    iframe.src = 'mycmd://' + encodeURIComponent(combinedCommand);
+    document.body.appendChild(iframe);
+    console.log('iframe created with src:', iframe.src);
+    // 立即移除 iframe，因为命令已经触发
     setTimeout(() => {
-      const iframe = document.createElement('iframe');
-      iframe.style.display = 'none';
-      iframe.src = 'mycmd://' + encodeURIComponent(command);
-      document.body.appendChild(iframe);
-      setTimeout(() => document.body.removeChild(iframe), 1000);
-    }, index * 500);
-  });
-
-  // 处理 # 指令：串行执行，不用 setTimeout
-  for (const command of customCommands) {
-    await executeInput('#' + command);
+      document.body.removeChild(iframe);
+      console.log('iframe removed for combined all command');
+    }, 100);
   }
 
   if (isPopupBlocked) {
