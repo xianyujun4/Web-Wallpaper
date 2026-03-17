@@ -60,24 +60,19 @@ const executeInput = async (input) => {
 
   // 终端命令
   if (trimmedInput.startsWith('$')) {
-
     const command = trimmedInput.substring(1).trim();
 
     if (command) {
+      // cmd /k 保持窗口常驻；chcp 65001 避免中文乱码
+      // 用 <a>.click() 而非 iframe.src，避免浏览器拦截自定义协议
+      const wrapped = `cmd /k chcp 65001>nul && ${command}`;
+      const a = document.createElement('a');
+      a.href = 'mycmd://' + encodeURIComponent(wrapped);
+      a.style.display = 'none';
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(() => document.body.removeChild(a), 500);
 
-      const encodedCommand = encodeURIComponent(command);
-
-      // 使用iframe执行命令，避免页面跳转中断后续执行
-      const iframe = document.createElement('iframe');
-      iframe.style.display = 'none';
-      iframe.src = 'mycmd://' + encodedCommand;
-      document.body.appendChild(iframe);
-      
-      // 执行完成后移除iframe
-      setTimeout(() => {
-        document.body.removeChild(iframe);
-      }, 100);
-      
       addToHistory(trimmedInput, 'command');
     }
 

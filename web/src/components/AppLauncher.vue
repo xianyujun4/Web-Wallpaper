@@ -30,18 +30,25 @@ const lines = computed(() => {
 // 处理按钮点击事件
 const handleButtonClick = async (app) => {
   if (app.url) {
-    // 找到地址栏元素
-    const addressBar = document.querySelector('.address-bar');
-    const addressInputEl = document.querySelector('.address-input');
-    
-    if (addressBar && addressInputEl) {
-      // 显示地址栏
-      addressBar.classList.add('visible');
-      // 输入URL
-      addressInputEl.value = app.url;
+    // 检查是否是自定义指令（以@开头）
+    if (app.url.startsWith('@')) {
+      const commandName = app.url.substring(1);
+      // 执行自定义指令
+      await executeInput(`#${commandName}`);
+    } else {
+      // 找到地址栏元素
+      const addressBar = document.querySelector('.address-bar');
+      const addressInputEl = document.querySelector('.address-input');
       
-      // 使用地址栏的执行函数来执行输入内容
-      await executeInput(app.url);
+      if (addressBar && addressInputEl) {
+        // 显示地址栏
+        addressBar.classList.add('visible');
+        // 输入URL
+        addressInputEl.value = app.url;
+        
+        // 使用地址栏的执行函数来执行输入内容
+        await executeInput(app.url);
+      }
     }
   }
 };

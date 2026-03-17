@@ -222,11 +222,14 @@ const handleGoToSelected = async () => {
   // 处理所有命令（$ 和 # 指令）：将它们合并为一个，使用 & 连接，只执行一次
   const allCommands = [];
   
-  // 添加 $ 指令
+  // 添加 $ 指令：用 cmd /k 包装，执行完保持窗口常驻显示结果
   if (shellCommands.length > 0) {
     console.log('adding shell commands:', shellCommands);
-    // 确保每个命令末尾没有斜杠
-    const cleanShellCommands = shellCommands.map(cmd => cmd.replace(/\/$/, ''));
+    const cleanShellCommands = shellCommands.map(cmd => {
+      const clean = cmd.replace(/\/$/, '').trim();
+      // cmd /k 让窗口执行完后保持常驻；chcp 65001 避免中文乱码
+      return `cmd /k chcp 65001>nul && ${clean}`;
+    });
     allCommands.push(...cleanShellCommands);
   }
   
@@ -345,7 +348,7 @@ onMounted(() => {
         <button class="delete-button" @click.stop="handleDeleteSelected">删除</button>
         <button class="go-button" @click.stop="handleGoToSelected">
           <div>前往</div>
-          <div class="go-button-note">目前还有BUG，只能打开多网页，无法执行多命令</div>
+          <div class="go-button-note"></div>
         </button>
       </div>
     </div>

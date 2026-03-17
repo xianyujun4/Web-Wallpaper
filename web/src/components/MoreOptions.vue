@@ -2,9 +2,21 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue';
 import HistoryRecord from './HistoryRecord.vue';
+import Bookmarks from './Bookmarks.vue';
+import HomeEdit from './HomeEdit.vue';
+import CustomCommands from './CustomCommands.vue';
+import Plugins from './Plugins.vue';
 
 // 声明组件可以发射的事件
-const emit = defineEmits(['close']);
+const emit = defineEmits(['close', 'update:apps', 'update:wallpaper']);
+
+// 声明组件可以接收的属性
+const props = defineProps({
+  apps: {
+    type: Array,
+    required: true
+  }
+});
 
 // 选项列表
 const options = [
@@ -17,12 +29,28 @@ const options = [
 
 // 控制历史记录窗口的显示
 const showHistory = ref(false);
+// 控制收藏夹窗口的显示
+const showBookmarks = ref(false);
+// 控制主页编辑窗口的显示
+const showHomeEdit = ref(false);
+// 控制自定义指令窗口的显示
+const showCustomCommands = ref(false);
+// 控制插件窗口的显示
+const showPlugins = ref(false);
 
 // 处理选项点击
 const handleOptionClick = (option) => {
   console.log('Clicked option:', option);
   if (option.id === 'history') {
     showHistory.value = true;
+  } else if (option.id === 'bookmarks') {
+    showBookmarks.value = true;
+  } else if (option.id === 'home') {
+    showHomeEdit.value = true;
+  } else if (option.id === 'commands') {
+    showCustomCommands.value = true;
+  } else if (option.id === 'plugins') {
+    showPlugins.value = true;
   }
   // 这里可以添加其他选项的处理逻辑
 };
@@ -35,7 +63,41 @@ const handleCloseHistory = () => {
 // 处理历史记录跳转后回到主页
 const handleGoToHome = () => {
   showHistory.value = false;
+  showBookmarks.value = false;
+  showHomeEdit.value = false;
+  showCustomCommands.value = false;
+  showPlugins.value = false;
   handleClose();
+};
+
+// 处理关闭收藏夹窗口
+const handleCloseBookmarks = () => {
+  showBookmarks.value = false;
+};
+
+// 处理关闭主页编辑窗口
+const handleCloseHomeEdit = () => {
+  showHomeEdit.value = false;
+};
+
+// 处理关闭自定义指令窗口
+const handleCloseCustomCommands = () => {
+  showCustomCommands.value = false;
+};
+
+// 处理关闭插件窗口
+const handleClosePlugins = () => {
+  showPlugins.value = false;
+};
+
+// 处理更新应用列表
+const handleUpdateApps = (updatedApps) => {
+  emit('update:apps', updatedApps);
+};
+
+// 处理更新壁纸
+const handleUpdateWallpaper = (wallpaper) => {
+  emit('update:wallpaper', wallpaper);
 };
 
 // 处理关闭窗口
@@ -84,6 +146,17 @@ const handleClickOutside = (event) => {
       </div>
     </div>
     <HistoryRecord v-if="showHistory" @close="handleCloseHistory" @go-to-home="handleGoToHome" />
+    <Bookmarks v-if="showBookmarks" @close="handleCloseBookmarks" @go-to-home="handleGoToHome" />
+    <HomeEdit 
+      v-if="showHomeEdit" 
+      :apps="props.apps"
+      @close="handleCloseHomeEdit" 
+      @go-to-home="handleGoToHome"
+      @update:apps="handleUpdateApps"
+      @update:wallpaper="handleUpdateWallpaper"
+    />
+    <CustomCommands v-if="showCustomCommands" @close="handleCloseCustomCommands" />
+    <Plugins v-if="showPlugins" @close="handleClosePlugins" />
   </div>
 </template>
 
