@@ -137,13 +137,6 @@ const saveWallpaperSettings = async () => {
   try {
     let videoId = null;
     
-    // 如果是视频壁纸且有文件，保存到 IndexedDB
-    if (wallpaperType.value === 'video' && videoPath.value.startsWith('blob:')) {
-      // 这里需要从 blob URL 恢复文件，然后转为 base64
-      // 但由于 blob URL 是临时的，我们需要在选择文件时就保存到 IndexedDB
-      // 所以实际上我们应该在 handleVideoFileSelect 中处理
-    }
-    
     const wallpaper = {
       type: wallpaperType.value,
       path: wallpaperPath.value,
@@ -357,8 +350,7 @@ const handleGoToHome = () => {
                 @error="() => alert('视频加载失败，请检查路径是否正确，或尝试使用文件选择按钮')"
               ></video>
               <div class="video-tip">
-                提示：使用文件选择按钮可以直接选择本地视频文件<br>
-                注意：刷新页面后需要重新选择视频文件（浏览器安全限制）
+                提示：使用文件选择按钮可以直接选择本地视频文件
               </div>
             </div>
           </div>

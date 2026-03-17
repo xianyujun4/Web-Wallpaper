@@ -1,6 +1,9 @@
 <!-- 历史记录组件 -->
 <script setup>
-import { ref, computed, onMounted } from 'vue';
+import { ref, onMounted } from 'vue';
+import { useCommand } from '../composables/useCommand';
+
+const { executeCommand } = useCommand();
 import { executeInput } from '../composables/useAddressBar';
 import { useGlobalState } from '../composables/useGlobalState';
 
@@ -233,40 +236,30 @@ const handleGoToSelected = async () => {
     allCommands.push(...cleanShellCommands);
   }
   
-  // 添加 # 指令
+  // 执行 # 指令
   if (customCommands.length > 0) {
-    console.log('adding custom commands:', customCommands);
-    // 确保每个命令末尾没有斜杠，并且将 open 指令转换为 start 指令
-    const cleanCustomCommands = customCommands.map(cmd => {
-      const cleanCmd = cmd.replace(/\/$/, '');
-      // 检查是否是 open 指令
-      if (cleanCmd.startsWith('open ')) {
-        // 将 open 指令转换为 start 指令
-        const filePath = cleanCmd.substring(5);
-        // 将 "/" 替换为 "\\"
-        const safeFilePath = filePath.replace(/\//g, '\\');
-        return 'start "" "' + safeFilePath + '"';
-      }
-      return cleanCmd;
+    console.log('executing custom commands:', customCommands);
+    customCommands.forEach(cmd => {
+      // 使用 executeCommand 执行 # 指令
+      executeCommand(cmd);
     });
-    allCommands.push(...cleanCustomCommands);
   }
   
-  // 执行所有命令
-  if (allCommands.length > 0) {
-    console.log('executing all commands:', allCommands);
+  // 执行所有 shell 命令
+  if (shellCommands.length > 0) {
+    console.log('executing shell commands:', shellCommands);
     // 将所有命令合并为一个，使用 & 连接
     const combinedCommand = allCommands.join(' & ');
-    console.log('combined all command:', combinedCommand);
-    const iframe = document.createElement('iframe');
-    iframe.style.display = 'none';
-    iframe.src = 'mycmd://' + encodeURIComponent(combinedCommand);
-    document.body.appendChild(iframe);
-    console.log('iframe created with src:', iframe.src);
-    // 立即移除 iframe，因为命令已经触发
+    console.log('combined shell commands:', combinedCommand);
+    
+    // 使用 <a> 标签的 click() 方法替代 iframe
+    const a = document.createElement('a');
+    a.href = 'mycmd://' + encodeURIComponent(combinedCommand);
+    a.style.display = 'none';
+    document.body.appendChild(a);
+    a.click();
     setTimeout(() => {
-      document.body.removeChild(iframe);
-      console.log('iframe removed for combined all command');
+      document.body.removeChild(a);
     }, 100);
   }
 
