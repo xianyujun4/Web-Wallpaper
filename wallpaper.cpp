@@ -1,31 +1,20 @@
 // Web-Wallpaper 桌面主程序
 //
-// 编译前准备：
-//   1. 下载 WebView2 SDK（仅需头文件和 .lib）：
-//      https://www.nuget.org/packages/Microsoft.Web.WebView2
-//      解压后取出 build/native/include/ 和 build/native/x64/ 放到项目目录
-//   2. 编译命令：
-//      g++ -o wallpaper.exe wallpaper.cpp
-//          -I./include
-//          -L./x64
-//          -lWebView2LoaderStatic -luser32 -lgdi32 -lshell32
-//          -lole32 -loleaut32 -luuid -lws2_32
-//          -mwindows -std=c++17
+// 编译命令：
+//   g++ -o wallpaper.exe wallpaper.cpp
+//       -I./include -L./x64
+//       "x64/WebView2Loader.dll.lib"
+//       -lshell32 -lole32 -luser32 -lgdi32 -lws2_32
+//       -mwindows -std=c++17
 //
-// 运行时依赖：
-//   - Microsoft Edge WebView2 运行时（Windows 11 自带）
-//   - icon.ico 与 wallpaper.exe 同目录
-//   - web/dist/index.html 与 wallpaper.exe 同目录（生产模式）
-//
-// 功能：
-//   - 全屏透明窗口置于桌面最底层，不抢焦点，不影响其他程序
-//   - 检测 localhost:5173，有则加载开发服务器，否则加载 dist
-//   - 系统托盘图标，右键菜单：重新加载 / 退出
-//   - 单例检查，重复启动自动退出
+// 挂载策略：
+//   - 未检测到 Wallpaper Engine → 挂到 WorkerW，桌面图标正常显示在上方
+//   - 检测到 Wallpaper Engine   → 透明浮层模式，WE 壁纸透过来，UI 组件浮在上面
 
 #include <winsock2.h>   // 必须在 windows.h 之前
 #include <ws2tcpip.h>
 #include <windows.h>
+#include <tlhelp32.h>
 #include <shellapi.h>
 #include <shlobj.h>
 #include <string>
@@ -359,6 +348,60 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
     return DefWindowProcW(hWnd, msg, wParam, lParam);
 }
 
+// ── WorkerW 挂载 ──────────────────────────────────────────────────────
+
+// 检测 Wallpaper Engine 是否在运行（检查进程名）
+bool IsWallpaperEngineRunning() {
+    HANDLE snap = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+    if (snap == INVALID_HANDLE_VALUE) return false;
+
+    PROCESSENTRY32W pe = {};
+    pe.dwSize = sizeof(pe);
+    bool found = false;
+
+    if (Process32FirstW(snap, &pe)) {
+        do {
+            // Wallpaper Engine 主进程名
+            if (wcscmp(pe.szExeFile, L"wallpaper_engine.exe") == 0 ||
+                wcscmp(pe.szExeFile, L"wallpaper32.exe") == 0 ||
+                wcscmp(pe.szExeFile, L"wallpaper64.exe") == 0) {
+                found = true;
+                break;
+            }
+        } while (Process32NextW(snap, &pe));
+    }
+    CloseHandle(snap);
+    return found;
+}
+
+// 枚举回调：找到带 SHELLDLL_DefView 的窗口，取其后的 WorkerW
+struct FindWorkerWData { HWND result; };
+
+BOOL CALLBACK FindWorkerWProc(HWND hWnd, LPARAM lParam) {
+    FindWorkerWData* data = (FindWorkerWData*)lParam;
+    HWND hShelf = FindWindowExW(hWnd, NULL, L"SHELLDLL_DefView", NULL);
+    if (hShelf) {
+        data->result = FindWindowExW(NULL, hWnd, L"WorkerW", NULL);
+        return FALSE;  // 找到了，停止枚举
+    }
+    return TRUE;
+}
+
+// 找到 WorkerW 句柄，找不到返回 NULL
+HWND GetWorkerW() {
+    // 1. 找 Progman
+    HWND hProgman = FindWindowW(L"Progman", NULL);
+    if (!hProgman) return NULL;
+
+    // 2. 发送 0x052C 让系统在 Progman 和图标层之间创建 WorkerW
+    SendMessageTimeoutW(hProgman, 0x052C, 0, 0, SMTO_NORMAL, 1000, nullptr);
+
+    // 3. 枚举顶层窗口找到 WorkerW
+    FindWorkerWData data = { NULL };
+    EnumWindows(FindWorkerWProc, (LPARAM)&data);
+    return data.result;
+}
+
 // ── 入口点 ────────────────────────────────────────────────────────────
 int WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR, int) {
     // 单例检查
@@ -381,28 +424,59 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR, int) {
     wc.hCursor        = LoadCursor(NULL, IDC_ARROW);
     RegisterClassExW(&wc);
 
-    // 覆盖整个虚拟桌面（多显示器）
+    // 虚拟桌面尺寸
     int x = GetSystemMetrics(SM_XVIRTUALSCREEN);
     int y = GetSystemMetrics(SM_YVIRTUALSCREEN);
     int w = GetSystemMetrics(SM_CXVIRTUALSCREEN);
     int h = GetSystemMetrics(SM_CYVIRTUALSCREEN);
 
-    // WS_EX_NOACTIVATE  → 不抢焦点
-    // WS_EX_TOOLWINDOW  → 不在任务栏显示
-    // WS_EX_LAYERED     → 支持透明度设置
-    g_hWnd = CreateWindowExW(
-        WS_EX_NOACTIVATE | WS_EX_TOOLWINDOW | WS_EX_LAYERED,
-        CLASS_NAME, L"Web-Wallpaper",
-        WS_POPUP | WS_VISIBLE,
-        x, y, w, h,
-        NULL, NULL, hInst, NULL
-    );
+    // 检测 Wallpaper Engine
+    bool weRunning = IsWallpaperEngineRunning();
 
-    SetLayeredWindowAttributes(g_hWnd, 0, 255, LWA_ALPHA);
+    if (!weRunning) {
+        // ── WorkerW 模式：挂到桌面层，图标在上面正常显示 ──
+        HWND hWorkerW = GetWorkerW();
 
-    // 置于所有窗口最底层
-    SetWindowPos(g_hWnd, HWND_BOTTOM, x, y, w, h,
-                 SWP_NOACTIVATE | SWP_SHOWWINDOW);
+        if (hWorkerW) {
+            // 创建子窗口，挂到 WorkerW 下
+            g_hWnd = CreateWindowExW(
+                0,
+                CLASS_NAME, L"Web-Wallpaper",
+                WS_CHILD | WS_VISIBLE,
+                0, 0, w, h,
+                hWorkerW, NULL, hInst, NULL
+            );
+        } else {
+            // WorkerW 找不到（极少数情况），退回底层窗口模式
+            g_hWnd = CreateWindowExW(
+                WS_EX_NOACTIVATE | WS_EX_TOOLWINDOW | WS_EX_LAYERED,
+                CLASS_NAME, L"Web-Wallpaper",
+                WS_POPUP | WS_VISIBLE,
+                x, y, w, h,
+                NULL, NULL, hInst, NULL
+            );
+            SetLayeredWindowAttributes(g_hWnd, 0, 255, LWA_ALPHA);
+            SetWindowPos(g_hWnd, HWND_BOTTOM, x, y, w, h,
+                         SWP_NOACTIVATE | SWP_SHOWWINDOW);
+        }
+    } else {
+        // ── 透明浮层模式：WE 在运行，浮在上面只显示 UI 组件 ──
+        // 通知 Vue 切换透明模式（Vue 加载后会读 localStorage，
+        // 这里提前设标志，CtrlCompletedHandler 里会检查）
+        g_transparentMode = true;
+
+        g_hWnd = CreateWindowExW(
+            WS_EX_NOACTIVATE | WS_EX_TOOLWINDOW | WS_EX_LAYERED,
+            CLASS_NAME, L"Web-Wallpaper",
+            WS_POPUP | WS_VISIBLE,
+            x, y, w, h,
+            NULL, NULL, hInst, NULL
+        );
+        // 透明背景，让 WE 壁纸透过来
+        SetLayeredWindowAttributes(g_hWnd, RGB(0,0,0), 0, LWA_COLORKEY);
+        SetWindowPos(g_hWnd, HWND_BOTTOM, x, y, w, h,
+                     SWP_NOACTIVATE | SWP_SHOWWINDOW);
+    }
 
     MSG msg;
     while (GetMessage(&msg, NULL, 0, 0)) {
