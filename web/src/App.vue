@@ -127,6 +127,15 @@ const wallpaper = ref({
 onMounted(async () => {
   const loadedWallpaper = await loadWallpaper();
   wallpaper.value = loadedWallpaper;
+
+  // 通知 wallpaper.exe 当前壁纸类型
+  // window.chrome.webview 仅在 WebView2 环境中存在，浏览器开发时忽略
+  if (window.chrome?.webview) {
+    const msg = loadedWallpaper.type === 'transparent'
+      ? 'wallpaper:transparent'
+      : 'wallpaper:opaque';
+    window.chrome.webview.postMessage(msg);
+  }
 });
 
 // 监听应用列表变化，保存到本地存储
@@ -192,6 +201,13 @@ const handleUpdateWallpaper = (updatedWallpaper) => {
     localStorage.setItem('wallpaper', JSON.stringify(updatedWallpaper));
   } catch (error) {
     console.error('Failed to save wallpaper to localStorage:', error);
+  }
+  // 实时通知 wallpaper.exe 切换透明模式
+  if (window.chrome?.webview) {
+    const msg = updatedWallpaper.type === 'transparent'
+      ? 'wallpaper:transparent'
+      : 'wallpaper:opaque';
+    window.chrome.webview.postMessage(msg);
   }
 };
 

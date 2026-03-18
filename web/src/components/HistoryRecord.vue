@@ -1,6 +1,6 @@
 <!-- 历史记录组件 -->
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, computed,onMounted } from 'vue';
 import { useCommand } from '../composables/useCommand';
 
 const { executeCommand } = useCommand();

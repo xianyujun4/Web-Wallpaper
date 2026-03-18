@@ -9,4 +9,4 @@ Windows Registry Editor Version 5.00
 [HKEY_CLASSES_ROOT\mycmd\shell\open]
 
 [HKEY_CLASSES_ROOT\mycmd\shell\open\command]
-@="\"E:\\一些文件\\文件\\Web-Wallpaper\\runner.exe\" \"%1\""
+@="\"E:\\Someting\\Object\\Web-Wallpaper\\runner.exe\" \"%1\""
